@@ -155,7 +155,7 @@ function mounts:newLivingMount(id,modelpart,headpart,saddlepart,bagpart,armorpar
     errorCheck(id,modelpart,headpart,saddlepart,bagpart,armorpart,armortext,passenger,anim)
     modelpart:setParentType("World"):setVisible(false):scale(-1,1,-1)
     local saddles = type(saddlepart)=="table" and saddlepart or {saddlepart}
-    local bags = type(bagpart) and bagpart or {bagpart}
+    local bags = type(bagpart)=="table" and bagpart or {bagpart}
     local head = type(headpart)=="table" and headpart or {headpart}
     local armor = type(armorpart)=="table" and armorpart or {armorpart}
     local pass = type(passenger)=="table" and passenger or {passenger}
