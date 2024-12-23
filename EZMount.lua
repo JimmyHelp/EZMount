@@ -1,4 +1,4 @@
--- V1
+-- V2
 -- Made by JimmyHelp
 -- Contains GS' entityAPI:getLocalHVelocity() function from GSExtensions
 
@@ -68,6 +68,10 @@ end
 local function getMount(name)
     if not vehicle then return false end
     return vehicle:getType():find(name) or vehicle:getName():find(name)
+end
+
+local function getArmor(entity)
+    return entity.body_armor_item or entity.ArmorItems[3]
 end
 
 local textGuide = '§f\nlocal textureTable  = {\n    iron = textures["reference"],\n    diamond = textures["reference"],\n    golden = textures["reference"],\n    leather = textures["reference"]\n}\n'..
@@ -155,7 +159,7 @@ function mounts:newLivingMount(id,modelpart,headpart,saddlepart,bagpart,armorpar
     errorCheck(id,modelpart,headpart,saddlepart,bagpart,armorpart,armortext,passenger,anim)
     modelpart:setParentType("World"):setVisible(false):scale(-1,1,-1)
     local saddles = type(saddlepart)=="table" and saddlepart or {saddlepart}
-    local bags = type(bagpart)=="table" and bagpart or {bagpart}
+    local bags = type(bagpart) and bagpart or {bagpart}
     local head = type(headpart)=="table" and headpart or {headpart}
     local armor = type(armorpart)=="table" and armorpart or {armorpart}
     local pass = type(passenger)=="table" and passenger or {passenger}
@@ -172,14 +176,17 @@ function mounts:newLivingMount(id,modelpart,headpart,saddlepart,bagpart,armorpar
         for _,value in pairs(bags) do
             value:setVisible(vehicle:getNbt().Items or false)
         end
+        local armorResult = getArmor(vehicle:getNbt())
         for _,value in pairs(armor) do
-            value:setVisible(vehicle:getNbt().ArmorItems[3].id or false)
-            if vehicle:getNbt().ArmorItems[3].id ~= nil and armortext then
-                value:setPrimaryTexture("Custom",armortext[vehicle:getNbt().ArmorItems[3].id:gsub(".-:", ""):match("^[^_]+")])
-                if vehicle:getNbt().ArmorItems[3].tag then
-                    value:setColor(vectors.intToRGB(player:getVehicle():getNbt().ArmorItems[3].tag.display.color))
+            value:setVisible(armorResult.id or false)
+            if armorResult.id ~= nil and armortext then
+                value:setPrimaryTexture("Custom",armortext[armorResult.id:gsub(".-:", ""):match("^[^_]+")])
+                if armorResult.tag then
+                    value:setColor(vectors.intToRGB(armorResult.tag.display.color))
+                elseif armorResult.components then
+                    value:setColor(vectors.intToRGB(armorResult.components["minecraft:dyed_color"].rgb))
                 else
-                    value:setColor(vehicle:getNbt().ArmorItems[3].id:gsub(".-:", ""):match("^[^_]+")=="leather" and vec(79/255,50/255,14/255) or vec(1,1,1))
+                    value:setColor(armorResult.id:gsub(".-:", ""):match("^[^_]+")=="leather" and vec(79/255,50/255,14/255) or vec(1,1,1))
                 end
             end
         end
