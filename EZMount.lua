@@ -1,4 +1,4 @@
--- V2
+-- V3 for 1.21.5 and below (may not work above... idk Mojang likes changing things)
 -- Made by JimmyHelp
 -- Contains GS' entityAPI:getLocalHVelocity() function from GSExtensions
 
@@ -71,7 +71,7 @@ local function getMount(name)
 end
 
 local function getArmor(entity)
-    return entity.body_armor_item or entity.ArmorItems[3]
+    return entity.body_armor_item or (entity.ArmorItem and entity.ArmorItems[3]) or (entity.equipment.body or {})
 end
 
 local textGuide = '§f\nlocal textureTable  = {\n    iron = textures["reference"],\n    diamond = textures["reference"],\n    golden = textures["reference"],\n    leather = textures["reference"]\n}\n'..
